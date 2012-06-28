@@ -16,5 +16,10 @@ namespace Client
         bool Expire(string key, int seconds);
         long Ttl(string key);
         bool ExpireAt(string key, DateTime expireDate);
+        StatusReply Auth(string password);
+        string Echo(string message);
+        StatusReply Ping();
+        StatusReply Quit();
+        StatusReply Select(int db);
     }
 }

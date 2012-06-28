@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 
 namespace Client
@@ -13,6 +14,11 @@ namespace Client
         {
             if (bytes == null) return null;
             return Encoding.UTF8.GetString(bytes);
+        }
+
+        public static string ToUnixTimestamp(this DateTime datetime)
+        {
+            return ((int) (datetime - new DateTime(1970, 1, 1)).TotalSeconds).ToString();
         }
     }
 }

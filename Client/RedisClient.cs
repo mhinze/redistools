@@ -19,12 +19,12 @@ namespace Client
 
         public StatusReply Del(string key)
         {
-            return _connection.SendExpectSuccess(RedisCommands.DEL, key.ToBytes());
+            return _connection.SendExpectStatusReply(RedisCommands.DEL, key.ToBytes());
         }
 
         public StatusReply Set(string key, string value)
         {
-            return _connection.SendExpectSuccess(RedisCommands.SET, key.ToBytes(), value.ToBytes());
+            return _connection.SendExpectStatusReply(RedisCommands.SET, key.ToBytes(), value.ToBytes());
         }
 
         public byte[] Get(string key)
@@ -40,7 +40,7 @@ namespace Client
 
         public StatusReply FlushAll()
         {
-            return _connection.SendExpectSuccess(RedisCommands.FLUSHALL);
+            return _connection.SendExpectStatusReply(RedisCommands.FLUSHALL);
         }
 
         public string[] Keys(string pattern)
@@ -71,8 +71,33 @@ namespace Client
 
         public bool ExpireAt(string key, DateTime expireDate)
         {
-            var unixTimestamp = ((int)(expireDate - new DateTime(1970, 1, 1)).TotalSeconds).ToString();
+            var unixTimestamp = expireDate.ToUnixTimestamp();
             return _connection.SendExpectInt("EXPIREAT", key, unixTimestamp) == 1;
+        }
+
+        public StatusReply Auth(string password)
+        {
+            return _connection.SendExpectStatusReply()
+        }
+
+        public string Echo(string message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public StatusReply Ping()
+        {
+            throw new NotImplementedException();
+        }
+
+        public StatusReply Quit()
+        {
+            throw new NotImplementedException();
+        }
+
+        public StatusReply Select(int db)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Client.Replies.Parsers
 {
-    public class BulkReplyParser
+    public class BulkReplyParser : IReplyParser<BulkReply>
     {
         public BulkReply Parse(Stream reply)
         {
@@ -34,5 +34,10 @@ namespace Client.Replies.Parsers
             }
             return sb.ToString();
         }
+    }
+
+    public interface IReplyParser<T>
+    {
+        T Parse(Stream stream);
     }
 }

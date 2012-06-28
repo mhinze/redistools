@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Client.Replies.Parsers
 {
-    public class MultiBulkReplyParser
+    public class MultiBulkReplyParser : IReplyParser<MultiBulkReply>
     {
         public MultiBulkReply Parse(Stream reply)
         {

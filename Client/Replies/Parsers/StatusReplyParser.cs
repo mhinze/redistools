@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Client.Replies.Parsers
 {
-    public class StatusReplyParser
+    public class StatusReplyParser : IReplyParser<StatusReply>
     {
         public StatusReply Parse(Stream reply)
         {

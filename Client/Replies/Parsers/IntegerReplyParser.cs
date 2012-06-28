@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Client.Replies.Parsers
 {
-    public class IntegerReplyParser
+    public class IntegerReplyParser : IReplyParser<IntegerReply>
     {
          public IntegerReply Parse(Stream reply)
          {

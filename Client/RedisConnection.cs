@@ -1,12 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Client.Replies;
 using Client.Replies.Parsers;
-using System.Linq;
 
 namespace Client
 {
+    public static class ReplyParsers
+    {
+        static readonly Dictionary<Type, object> table =
+            new Dictionary<Type, object>
+                {
+                    {typeof (BulkReply), new BulkReplyParser()},
+                    {typeof (IntegerReply), new IntegerReplyParser()},
+                    {typeof (MultiBulkReply), new MultiBulkReplyParser()},
+                    {typeof (StatusReply), new StatusReplyParser()}
+                };
+
+        public static IReplyParser<T> Get<T>()
+        {
+            return (IReplyParser<T>) table[typeof (T)];
+        }
+    }
+
+
     public class RedisConnection
     {
         static readonly byte[] crlf = new[] {(byte) '\r', (byte) '\n'};
@@ -25,7 +43,7 @@ namespace Client
             _socket = new RedisClientSocket(server);
         }
 
-        public StatusReply SendExpectSuccess(params byte[][] arguments)
+        public StatusReply SendExpectStatusReply(params byte[][] arguments)
         {
             return Send(arguments, stream => statusReplyParser.Parse(stream));
         }
@@ -50,6 +68,11 @@ namespace Client
         public MultiBulkReply SendExpectMultiBulkReply(params byte[][] arguments)
         {
             return Send(arguments, stream => multiBulkReplyParser.Parse(stream));
+        }
+
+        public TReply Send<TReply>(byte[][] arguments)
+        {
+            return Send(arguments, ReplyParsers.Get<TReply>().Parse);
         }
 
         TReply Send<TReply>(byte[][] arguments, Func<Stream, TReply> handleResponse)
@@ -96,4 +119,3 @@ namespace Client
         }
     }
 }
-
