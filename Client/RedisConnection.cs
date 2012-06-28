@@ -24,31 +24,36 @@ namespace Client
         }
     }
 
-
     public class RedisConnection
     {
         static readonly byte[] crlf = new[] {(byte) '\r', (byte) '\n'};
         readonly IConnectionLog _log;
-        readonly RedisServer _server;
         readonly RedisClientSocket _socket;
-        readonly BulkReplyParser bulkReplyParser = new BulkReplyParser();
-        readonly IntegerReplyParser integerReplyParser = new IntegerReplyParser();
-        readonly MultiBulkReplyParser multiBulkReplyParser = new MultiBulkReplyParser();
-        readonly StatusReplyParser statusReplyParser = new StatusReplyParser();
 
         public RedisConnection(RedisServer server, IConnectionLog log)
         {
-            _server = server;
             _log = log ?? new NoopLog();
             _socket = new RedisClientSocket(server);
         }
 
-        public StatusReply SendExpectStatusReply(params byte[][] arguments)
+        public TReply Send<TReply>(params byte[][] arguments)
         {
-            return Send(arguments, stream => statusReplyParser.Parse(stream));
+            return send(arguments, ReplyParsers.Get<TReply>().Parse);
         }
 
-        byte[] GetRequestBytes(byte[][] arguments)
+        public TReply Send<TReply>(params string[] arguments)
+        {
+            return Send<TReply>(arguments.Select(x => x.ToBytes()).ToArray());
+        }
+
+        public TReply Send<TReply>(byte[] command, params string[] arguments)
+        {
+            var sources = new[] {command}.Concat(arguments.Select(x => x.ToBytes())).ToArray();
+
+            return Send<TReply>(sources);
+        }
+
+        static byte[] getRequestBytes(byte[][] arguments)
         {
             var bytes = new List<byte> {(byte) '*'};
 
@@ -64,20 +69,10 @@ namespace Client
             }
             return bytes.ToArray();
         }
-
-        public MultiBulkReply SendExpectMultiBulkReply(params byte[][] arguments)
+        
+        TReply send<TReply>(byte[][] arguments, Func<Stream, TReply> handleResponse)
         {
-            return Send(arguments, stream => multiBulkReplyParser.Parse(stream));
-        }
-
-        public TReply Send<TReply>(byte[][] arguments)
-        {
-            return Send(arguments, ReplyParsers.Get<TReply>().Parse);
-        }
-
-        TReply Send<TReply>(byte[][] arguments, Func<Stream, TReply> handleResponse)
-        {
-            var commandBytes = GetRequestBytes(arguments);
+            var commandBytes = getRequestBytes(arguments);
             _log.LogRequest(commandBytes);
             var response = handleResponse;
             handleResponse = stream =>
@@ -88,26 +83,6 @@ namespace Client
                 };
 
             return _socket.Send(commandBytes, handleResponse);
-        }
-
-        public BulkReply SendExpectBulkReply(params byte[][] arguments)
-        {
-            return Send(arguments, stream => bulkReplyParser.Parse(stream));
-        }
-
-        public long SendExpectInt(params byte[][] arguments)
-        {
-            return Send(arguments, stream => integerReplyParser.Parse(stream)).Value;
-        }
-
-        public long SendExpectInt(params string[] arguments)
-        {
-            return SendExpectInt(arguments.Select(x => x.ToBytes()).ToArray());
-        }
-
-        public long SendExpectInt(byte[] command, params string[] arguments)
-        {
-            return SendExpectInt(new[] {command}.Concat(arguments.Select(x => x.ToBytes())).ToArray());
         }
 
         class NoopLog : IConnectionLog

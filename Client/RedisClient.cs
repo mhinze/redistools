@@ -19,18 +19,17 @@ namespace Client
 
         public StatusReply Del(string key)
         {
-            return _connection.SendExpectStatusReply(RedisCommands.DEL, key.ToBytes());
+            return _connection.Send<StatusReply>(RedisCommands.DEL, key);
         }
 
         public StatusReply Set(string key, string value)
         {
-            return _connection.SendExpectStatusReply(RedisCommands.SET, key.ToBytes(), value.ToBytes());
+            return _connection.Send<StatusReply>(RedisCommands.SET, key, value);
         }
 
         public byte[] Get(string key)
         {
-            var bulkReply = _connection.SendExpectBulkReply(RedisCommands.GET, key.ToBytes());
-            return bulkReply.Value;
+            return _connection.Send<BulkReply>(RedisCommands.GET, key);
         }
 
         public string GetString(string key)
@@ -40,64 +39,64 @@ namespace Client
 
         public StatusReply FlushAll()
         {
-            return _connection.SendExpectStatusReply(RedisCommands.FLUSHALL);
+            return _connection.Send<StatusReply>(RedisCommands.FLUSHALL);
         }
 
         public string[] Keys(string pattern)
         {
-            var reply = _connection.SendExpectMultiBulkReply(RedisCommands.KEYS, pattern.ToBytes());
+            var reply = _connection.Send<MultiBulkReply>(RedisCommands.KEYS, pattern);
             return reply.GetElements().Select(x => Encoding.UTF8.GetString(x)).ToArray();
         }
 
         public long DbSize()
         {
-            return _connection.SendExpectInt(RedisCommands.DBSIZE);
+            return _connection.Send<IntegerReply>(RedisCommands.DBSIZE);
         }
 
         public bool Exists(string key)
         {
-            return _connection.SendExpectInt(RedisCommands.EXISTS, key.ToBytes()) == 1;
+            return _connection.Send<IntegerReply>(RedisCommands.EXISTS, key.ToBytes());
         }
 
         public bool Expire(string key, int seconds)
         {
-            return _connection.SendExpectInt(RedisCommands.EXPIRE, key.ToBytes(), seconds.ToString().ToBytes()) == 1;
+            return _connection.Send<IntegerReply>(RedisCommands.EXPIRE, key, seconds.ToString());
         }
 
         public long Ttl(string key)
         {
-            return _connection.SendExpectInt("TTL", key);
+            return _connection.Send<IntegerReply>("TTL", key);
         }
 
         public bool ExpireAt(string key, DateTime expireDate)
         {
             var unixTimestamp = expireDate.ToUnixTimestamp();
-            return _connection.SendExpectInt("EXPIREAT", key, unixTimestamp) == 1;
+            return _connection.Send<IntegerReply>("EXPIREAT", key, unixTimestamp);
         }
 
         public StatusReply Auth(string password)
         {
-            return _connection.SendExpectStatusReply()
+            return _connection.Send<StatusReply>("AUTH", password);
         }
 
         public string Echo(string message)
         {
-            throw new NotImplementedException();
+            return _connection.Send<BulkReply>("ECHO", message);
         }
 
         public StatusReply Ping()
         {
-            throw new NotImplementedException();
+            return _connection.Send<StatusReply>("PING");
         }
 
         public StatusReply Quit()
         {
-            throw new NotImplementedException();
+            return _connection.Send<StatusReply>("QUIT");
         }
 
         public StatusReply Select(int db)
         {
-            throw new NotImplementedException();
+            return _connection.Send<StatusReply>("SELECT", db.ToString());
         }
     }
 }
