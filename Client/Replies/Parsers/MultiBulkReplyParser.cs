@@ -12,6 +12,7 @@ namespace Client.Replies.Parsers
             var length = ReadLine(reply);
             if (length[0] == '-' && length[1] == '1' && length.Length == 2) return null;
             var i = int.Parse(length);
+            if (i == 0) return result;
             var elementParser = new BulkReplyParser();
             for (int j = 0; j < i; j++)
             {
@@ -21,8 +22,7 @@ namespace Client.Replies.Parsers
                 else
                 result.AddElement(bulkReply.Value);
             }
-            reply.ReadByte();
-            reply.ReadByte();
+            
             return result;
         }
 

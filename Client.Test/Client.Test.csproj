@@ -48,9 +48,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Replies\Parsers\BulkReplyParserTests_NullResponse.cs" />
     <Compile Include="Replies\Parsers\BulkReplyParserTests_SuccessfulResponse.cs" />
-    <Compile Include="Replies\Parsers\MultiBulkReplyParserTests_EmptyResponse.cs" />
-    <Compile Include="Replies\Parsers\IntegerReplyParserTests_SuccessfulResponse.cs" />
     <Compile Include="Replies\Parsers\MultiBulkReplyParserTests_SuccessfulResponse.cs" />
+    <Compile Include="Replies\Parsers\IntegerReplyParserTests_SuccessfulResponse.cs" />
+    <Compile Include="Replies\Parsers\MultiBulkReplyParserTests_NullResponse.cs" />
     <Compile Include="Replies\Parsers\StatusReplyParserTests_SuccessfulResponse.cs" />
     <Compile Include="Replies\Parsers\StatusReplyParserTests_FailedResponse.cs" />
     <Compile Include="TestCommands.cs" />

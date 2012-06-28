@@ -27,13 +27,16 @@ namespace Client
 
         public StatusReply SendExpectSuccess(params byte[][] arguments)
         {
-            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(_server.Host, _server.Port);
-            var bstream = new BufferedStream(new NetworkStream(socket), 16*1024);
-            var commandBytes = GetCommandBytes(arguments);
-            
-            SocketSend(commandBytes, socket);
-            return statusReplyParser.Parse(bstream);
+            using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+            {
+                socket.Connect(_server.Host, _server.Port);
+                var bstream = new BufferedStream(new NetworkStream(socket), 16 * 1024);
+                var commandBytes = GetCommandBytes(arguments);
+
+                SocketSend(commandBytes, socket);
+
+                return statusReplyParser.Parse(bstream);    
+            }
         }
 
         void SocketSend(byte[] commandBytes, Socket socket)
@@ -61,26 +64,34 @@ namespace Client
 
         public MultiBulkReply SendExpectMultiBulkReply(params byte[][] arguments)
         {
-            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(_server.Host, _server.Port);
-            var bstream = new BufferedStream(new NetworkStream(socket), 16*1024);
-            var commandBytes = GetCommandBytes(arguments);
-            SocketSend(commandBytes, socket);
+            using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+            {
+                socket.Connect(_server.Host, _server.Port);
+                var bstream = new BufferedStream(new NetworkStream(socket), 16 * 1024);
+                var commandBytes = GetCommandBytes(arguments);
+                SocketSend(commandBytes, socket);
 
-            var multiBulkReply = multiBulkReplyParser.Parse(bstream);
-            return multiBulkReply;
+                var multiBulkReply = multiBulkReplyParser.Parse(bstream);
+                socket.Disconnect(false);
+                socket.Close();
+                socket.Dispose();
+                return multiBulkReply;    
+            }
         }
 
         public BulkReply SendExpectBulkReply(params byte[][] arguments)
         {
-            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(_server.Host, _server.Port);
-            var bstream = new BufferedStream(new NetworkStream(socket), 16*1024);
-            var commandBytes = GetCommandBytes(arguments);
-            SocketSend(commandBytes, socket);
+            using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+            {
+                socket.Connect(_server.Host, _server.Port);
+                var bstream = new BufferedStream(new NetworkStream(socket), 16 * 1024);
+                var commandBytes = GetCommandBytes(arguments);
+                SocketSend(commandBytes, socket);
 
-            var reply = bulkReplyParser.Parse(bstream);
-            return reply;
+                var reply = bulkReplyParser.Parse(bstream);
+                
+                return reply;    
+            }
         }
 
         public int SendExpectInt(params byte[][] arguments)
