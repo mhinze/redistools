@@ -10,5 +10,6 @@ namespace Client
         string GetString(string key);
         void FlushAll();
         string[] Keys(string pattern);
+        int DbSize();
     }
 }

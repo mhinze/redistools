@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -29,7 +28,7 @@ namespace Client
 
         public byte[] Get(string key)
         {
-            return _connection.SendExpectBulkReply(RedisCommands.GET, key.ToBytes());
+            return _connection.SendExpectBulkReply(RedisCommands.GET, key.ToBytes()).Value;
         }
 
         public string GetString(string key)
@@ -46,6 +45,11 @@ namespace Client
         {
             var reply = _connection.SendExpectMultiBulkReply(RedisCommands.KEYS, pattern.ToBytes());
             return reply.GetElements().Select(x => Encoding.UTF8.GetString(x)).ToArray();
+        }
+
+        public int DbSize()
+        {
+            throw new NotImplementedException();
         }
     }
 }

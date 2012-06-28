@@ -16,3 +16,4 @@ _AzurePackage/
 *.Publish.xml
 *.orig
 *.ncrunchsolution
+*.ncrunchproject

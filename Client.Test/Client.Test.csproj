@@ -46,6 +46,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Replies\Parsers\BulkReplyParserTests_NullResponse.cs" />
+    <Compile Include="Replies\Parsers\BulkReplyParserTests_SuccessfulResponse.cs" />
+    <Compile Include="Replies\Parsers\MultiBulkReplyParserTests_EmptyResponse.cs" />
+    <Compile Include="Replies\Parsers\IntegerReplyParserTests_SuccessfulResponse.cs" />
+    <Compile Include="Replies\Parsers\MultiBulkReplyParserTests_SuccessfulResponse.cs" />
+    <Compile Include="Replies\Parsers\StatusReplyParserTests_SuccessfulResponse.cs" />
+    <Compile Include="Replies\Parsers\StatusReplyParserTests_FailedResponse.cs" />
     <Compile Include="TestCommands.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -57,6 +64,7 @@
       <Name>Client</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

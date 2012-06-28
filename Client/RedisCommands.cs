@@ -7,5 +7,6 @@
         public static readonly byte[] GET = "GET".ToBytes();
         public static readonly byte[] FLUSHALL = "FLUSHALL".ToBytes();
         public static readonly byte[] KEYS = "KEYS".ToBytes();
+        public static readonly byte[] DBSIZE = "DBSIZE".ToBytes();
     }
 }
