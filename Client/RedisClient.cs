@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Client.Replies;
 
 namespace Client
@@ -44,8 +44,7 @@ namespace Client
 
         public string[] Keys(string pattern)
         {
-            var reply = _connection.Send<MultiBulkReply>(RedisCommands.KEYS, pattern);
-            return reply.GetElements().Select(x => Encoding.UTF8.GetString(x)).ToArray();
+            return _connection.Send<MultiBulkReply>(RedisCommands.KEYS, pattern);
         }
 
         public long DbSize()
@@ -97,6 +96,38 @@ namespace Client
         public StatusReply Select(int db)
         {
             return _connection.Send<StatusReply>("SELECT", db.ToString());
+        }
+
+        public BulkReplyInfo Info()
+        {
+            return _connection.Send<BulkReply>("INFO");
+        }
+    }
+
+    public class BulkReplyInfo
+    {
+        readonly BulkReply _reply;
+        Dictionary<string, string> dictionary;
+
+        public BulkReplyInfo(BulkReply reply)
+        {
+            _reply = reply;
+        }
+
+        public string this[string key]
+        {
+            get
+            {
+                dictionary = dictionary ?? CreateDictionary();
+                return dictionary[key];
+            }
+        }
+
+        Dictionary<string, string> CreateDictionary()
+        {
+            var s = _reply.ToString();
+            var strings = s.Split('\r', '\n').Where(x => !string.IsNullOrWhiteSpace(x));
+            return strings.ToDictionary(x => x.Split(':')[0], x => x.Split(':')[1]);
         }
     }
 }

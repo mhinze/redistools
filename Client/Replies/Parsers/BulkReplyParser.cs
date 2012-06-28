@@ -35,9 +35,4 @@ namespace Client.Replies.Parsers
             return sb.ToString();
         }
     }
-
-    public interface IReplyParser<T>
-    {
-        T Parse(Stream stream);
-    }
 }

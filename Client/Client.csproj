@@ -50,6 +50,7 @@
     <Compile Include="Replies\IntegerReply.cs" />
     <Compile Include="Replies\MultiBulkReply.cs" />
     <Compile Include="Replies\Parsers\BulkReplyParser.cs" />
+    <Compile Include="Replies\Parsers\IReplyParser.cs" />
     <Compile Include="Replies\Parsers\MultiBulkReplyParser.cs" />
     <Compile Include="Replies\Parsers\IntegerReplyParser.cs" />
     <Compile Include="Replies\RedisReplyException.cs" />

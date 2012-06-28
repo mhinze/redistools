@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Client.Replies
 {
@@ -11,9 +12,14 @@ namespace Client.Replies
             elements.Add(element);
         }
 
-        public IEnumerable<byte[]> GetElements()
+        public IEnumerable<BulkReply> GetElements()
         {
-            return elements;
+            return elements.Select(x => x == null ? null : new BulkReply(x));
+        }
+
+        public static implicit operator string[](MultiBulkReply self)
+        {
+            return self.elements.Select(x => x.ToUtf8String()).ToArray();
         }
     }
 }

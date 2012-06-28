@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Client.Replies;
 
 namespace Client
@@ -21,5 +22,6 @@ namespace Client
         StatusReply Ping();
         StatusReply Quit();
         StatusReply Select(int db);
+        BulkReplyInfo Info();
     }
 }

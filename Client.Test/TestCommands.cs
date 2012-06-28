@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Client.Replies;
 using NUnit.Framework;
 using Should;
 
@@ -115,6 +116,43 @@ namespace Client.Test
             client.ExpireAt("foo", DateTime.UtcNow.AddSeconds(200));
 
             Assert.That(client.Ttl("foo"), Is.GreaterThan(1));
+        }
+
+        [Test, ExpectedException(typeof(RedisReplyException), ExpectedMessage = "ERR Client sent AUTH, but no password is set")]
+        public void Auth()
+        {
+            client.Auth("foo");
+        }
+
+        [Test]
+        public void Echo()
+        {
+            client.Echo("message").ShouldEqual("message");
+        }
+
+        [Test]
+        public void Ping()
+        {
+            client.Ping().Status.ShouldEqual("PONG");
+        }
+
+        [Test]
+        public void Quit()
+        {
+            client.Quit().Status.ShouldEqual("OK");
+            CreateClient();
+        }
+
+        [Test]
+        public void Select()
+        {
+            client.Select(0).Status.ShouldEqual("OK");
+        }
+
+        [Test]
+        public void Info()
+        {
+            client.Info()["role"].ShouldEqual("master");
         }
     }
 }

@@ -11,7 +11,6 @@ namespace Client.Replies
 
         public override string ToString()
         {
-            if (Value == null) return "(null)";
             return Value.ToUtf8String();
         }
 
@@ -23,6 +22,11 @@ namespace Client.Replies
         public static implicit operator byte[](BulkReply self)
         {
             return self.Value;
+        }
+
+        public static implicit  operator BulkReplyInfo(BulkReply self)
+        {
+            return new BulkReplyInfo(self);
         }
     }
 }

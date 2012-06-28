@@ -45,7 +45,7 @@ namespace Client.Test.Replies.Parsers
         [Test]
         public void Should_parse_first_element()
         {
-            reply.GetElements().ElementAt(0).ToUtf8String().ShouldEqual("foo");
+            reply.GetElements().ElementAt(0).ToString().ShouldEqual("foo");
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace Client.Test.Replies.Parsers
         [Test]
         public void Should_parse_last_element()
         {
-            reply.GetElements().ElementAt(2).ToUtf8String().ShouldEqual("bar");
+            reply.GetElements().ElementAt(2).ToString().ShouldEqual("bar");
         }
 
         [Test]
