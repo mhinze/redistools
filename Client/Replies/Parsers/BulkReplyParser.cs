@@ -9,7 +9,7 @@ namespace Client.Replies.Parsers
         {
             reply.ReadByte();
             var line = ReadLine(reply);
-            if (line[0] == '-' && line[1] == '1' && line.Length == 2) return null;
+            if (line[0] == '-' && line[1] == '1' && line.Length == 2) return new BulkReply(null);
             var i = int.Parse(line);
 
             var buffer = new byte[i];

@@ -30,7 +30,7 @@ namespace Client.Test.Replies.Parsers
 
             reply = new BulkReplyParser().Parse(stream);
 
-            reply.ShouldBeNull();
+            reply.Value.ShouldBeNull();
         }
     }
 }

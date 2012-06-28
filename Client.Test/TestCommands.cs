@@ -17,12 +17,13 @@ namespace Client.Test
         [SetUp]
         public void SetUp()
         {
-            client.FlushAll();
+            var statusReply = client.FlushAll();
+            statusReply.Status.ShouldEqual("OK");
         }
 
         IRedisClient client;
 
-        [Test, Explicit]
+        [Test]
         public void DbSize()
         {
             client.Set("foo", "bar");

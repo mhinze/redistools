@@ -1,6 +1,6 @@
-using System;
 using System.Linq;
 using System.Text;
+using Client.Replies;
 
 namespace Client
 {
@@ -16,19 +16,20 @@ namespace Client
         public RedisClient(string host = "127.0.0.1", int port = 6379, string password = null)
             : this(new RedisServer(host, port, password)) {}
 
-        public void Del(string key)
+        public StatusReply Del(string key)
         {
-            _connection.SendExpectSuccess(RedisCommands.DEL, key.ToBytes());
+            return _connection.SendExpectSuccess(RedisCommands.DEL, key.ToBytes());
         }
 
-        public void Set(string key, string value)
+        public StatusReply Set(string key, string value)
         {
-            _connection.SendExpectSuccess(RedisCommands.SET, key.ToBytes(), value.ToBytes());
+            return _connection.SendExpectSuccess(RedisCommands.SET, key.ToBytes(), value.ToBytes());
         }
 
         public byte[] Get(string key)
         {
-            return _connection.SendExpectBulkReply(RedisCommands.GET, key.ToBytes()).Value;
+            var bulkReply = _connection.SendExpectBulkReply(RedisCommands.GET, key.ToBytes());
+            return bulkReply.Value;
         }
 
         public string GetString(string key)
@@ -36,9 +37,9 @@ namespace Client
             return Get(key).ToUtf8String();
         }
 
-        public void FlushAll()
+        public StatusReply FlushAll()
         {
-            _connection.SendExpectSuccess(RedisCommands.FLUSHALL);
+            return _connection.SendExpectSuccess(RedisCommands.FLUSHALL);
         }
 
         public string[] Keys(string pattern)
@@ -49,7 +50,7 @@ namespace Client
 
         public int DbSize()
         {
-            throw new NotImplementedException();
+            return _connection.SendExpectInt(RedisCommands.DBSIZE);
         }
     }
 }

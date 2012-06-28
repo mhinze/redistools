@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
+﻿using System.Collections.Generic;
 using Client.Replies;
 using Client.Replies.Parsers;
 
@@ -11,43 +6,30 @@ namespace Client
 {
     public class RedisConnection
     {
-        static readonly byte[] crlf = new[] { (byte) '\r', (byte) '\n' };
+        static readonly byte[] crlf = new[] {(byte) '\r', (byte) '\n'};
         readonly IConnectionLog _log;
         readonly RedisServer _server;
-        readonly StatusReplyParser statusReplyParser = new StatusReplyParser();
-        readonly IntegerReplyParser integerReplyParser = new IntegerReplyParser();
+        readonly RedisClientSocket _socket;
         readonly BulkReplyParser bulkReplyParser = new BulkReplyParser();
+        readonly IntegerReplyParser integerReplyParser = new IntegerReplyParser();
         readonly MultiBulkReplyParser multiBulkReplyParser = new MultiBulkReplyParser();
+        readonly StatusReplyParser statusReplyParser = new StatusReplyParser();
 
         public RedisConnection(RedisServer server, IConnectionLog log)
         {
             _server = server;
             _log = log ?? new NoopLog();
+            _socket = new RedisClientSocket(server);
         }
 
         public StatusReply SendExpectSuccess(params byte[][] arguments)
         {
-            using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
-            {
-                socket.Connect(_server.Host, _server.Port);
-                var bstream = new BufferedStream(new NetworkStream(socket), 16 * 1024);
-                var commandBytes = GetCommandBytes(arguments);
-
-                SocketSend(commandBytes, socket);
-
-                return statusReplyParser.Parse(bstream);    
-            }
+            return _socket.Send(GetCommandBytes(arguments), stream => statusReplyParser.Parse(stream));
         }
 
-        void SocketSend(byte[] commandBytes, Socket socket)
-        {
-            _log.LogRequest(commandBytes);
-            socket.Send(commandBytes);
-        }
-        
         byte[] GetCommandBytes(byte[][] arguments)
         {
-            var bytes = new List<byte> { (byte) '*' };
+            var bytes = new List<byte> {(byte) '*'};
 
             bytes.AddRange(arguments.Length.ToString().ToBytes());
             bytes.AddRange(crlf);
@@ -64,39 +46,17 @@ namespace Client
 
         public MultiBulkReply SendExpectMultiBulkReply(params byte[][] arguments)
         {
-            using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
-            {
-                socket.Connect(_server.Host, _server.Port);
-                var bstream = new BufferedStream(new NetworkStream(socket), 16 * 1024);
-                var commandBytes = GetCommandBytes(arguments);
-                SocketSend(commandBytes, socket);
-
-                var multiBulkReply = multiBulkReplyParser.Parse(bstream);
-                socket.Disconnect(false);
-                socket.Close();
-                socket.Dispose();
-                return multiBulkReply;    
-            }
+            return _socket.Send(GetCommandBytes(arguments), stream => multiBulkReplyParser.Parse(stream));
         }
 
         public BulkReply SendExpectBulkReply(params byte[][] arguments)
         {
-            using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
-            {
-                socket.Connect(_server.Host, _server.Port);
-                var bstream = new BufferedStream(new NetworkStream(socket), 16 * 1024);
-                var commandBytes = GetCommandBytes(arguments);
-                SocketSend(commandBytes, socket);
-
-                var reply = bulkReplyParser.Parse(bstream);
-                
-                return reply;    
-            }
+            return _socket.Send(GetCommandBytes(arguments), stream => bulkReplyParser.Parse(stream));
         }
 
         public int SendExpectInt(params byte[][] arguments)
         {
-            throw new NotImplementedException();
+            return _socket.Send(GetCommandBytes(arguments), stream => integerReplyParser.Parse(stream)).Value;
         }
 
         class NoopLog : IConnectionLog

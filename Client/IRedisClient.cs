@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using Client.Replies;
 
 namespace Client
 {
     public interface IRedisClient
     {
-        void Del(string key);
-        void Set(string key, string value);
+        StatusReply Del(string key);
+        StatusReply Set(string key, string value);
         byte[] Get(string key);
         string GetString(string key);
-        void FlushAll();
+        StatusReply FlushAll();
         string[] Keys(string pattern);
         int DbSize();
     }
