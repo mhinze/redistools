@@ -7,8 +7,12 @@ namespace Client.Replies.Parsers
     {
         public BulkReply Parse(Stream reply)
         {
-            reply.ReadByte();
+            var firstByte = reply.ReadByte();
             var line = ReadLine(reply);
+            if (firstByte != '$')
+            {
+                throw new RedisReplyException(line);
+            }
             if (line[0] == '-' && line[1] == '1' && line.Length == 2) return new BulkReply(null);
             var i = int.Parse(line);
 

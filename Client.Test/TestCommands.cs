@@ -12,8 +12,8 @@ namespace Client.Test
         [TestFixtureSetUp]
         public void CreateClient()
         {
-            client = new RedisClient(new RedisServer("10.210.32.24"), new ConsoleConnectionLog());
-//          client = new RedisClient(new RedisServer("192.168.1.108"), new ConsoleConnectionLog());
+//            client = new RedisClient(new RedisServer("10.210.32.24"), new ConsoleConnectionLog());
+          client = new RedisClient(new RedisServer("192.168.1.108"), new ConsoleConnectionLog());
         }
 
         [SetUp]
