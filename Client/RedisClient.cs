@@ -52,5 +52,10 @@ namespace Client
         {
             return _connection.SendExpectInt(RedisCommands.DBSIZE);
         }
+
+        public bool Exists(string key)
+        {
+            return _connection.SendExpectInt(RedisCommands.EXISTS, key.ToBytes()) == 1;
+        }
     }
 }

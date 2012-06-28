@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Client.Replies;
 using Client.Replies.Parsers;
 
@@ -24,10 +26,10 @@ namespace Client
 
         public StatusReply SendExpectSuccess(params byte[][] arguments)
         {
-            return _socket.Send(GetCommandBytes(arguments), stream => statusReplyParser.Parse(stream));
+            return Send(arguments, stream => statusReplyParser.Parse(stream));
         }
 
-        byte[] GetCommandBytes(byte[][] arguments)
+        byte[] GetRequestBytes(byte[][] arguments)
         {
             var bytes = new List<byte> {(byte) '*'};
 
@@ -46,17 +48,32 @@ namespace Client
 
         public MultiBulkReply SendExpectMultiBulkReply(params byte[][] arguments)
         {
-            return _socket.Send(GetCommandBytes(arguments), stream => multiBulkReplyParser.Parse(stream));
+            return Send(arguments, stream => multiBulkReplyParser.Parse(stream));
+        }
+
+        TReply Send<TReply>(byte[][] arguments, Func<Stream, TReply> handleResponse)
+        {
+            var commandBytes = GetRequestBytes(arguments);
+            _log.LogRequest(commandBytes);
+            var response = handleResponse;
+            handleResponse = stream =>
+                {
+                    var reply = response(new LoggingStream(stream, _log));
+                    _log.FlushReply();
+                    return reply;
+                };
+
+            return _socket.Send(commandBytes, handleResponse);
         }
 
         public BulkReply SendExpectBulkReply(params byte[][] arguments)
         {
-            return _socket.Send(GetCommandBytes(arguments), stream => bulkReplyParser.Parse(stream));
+            return Send(arguments, stream => bulkReplyParser.Parse(stream));
         }
 
         public int SendExpectInt(params byte[][] arguments)
         {
-            return _socket.Send(GetCommandBytes(arguments), stream => integerReplyParser.Parse(stream)).Value;
+            return Send(arguments, stream => integerReplyParser.Parse(stream)).Value;
         }
 
         class NoopLog : IConnectionLog

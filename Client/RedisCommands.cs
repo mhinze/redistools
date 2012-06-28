@@ -8,5 +8,6 @@
         public static readonly byte[] FLUSHALL = "FLUSHALL".ToBytes();
         public static readonly byte[] KEYS = "KEYS".ToBytes();
         public static readonly byte[] DBSIZE = "DBSIZE".ToBytes();
+        public static readonly byte[] EXISTS = "EXISTS".ToBytes();
     }
 }

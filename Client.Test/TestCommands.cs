@@ -77,5 +77,15 @@ namespace Client.Test
 
             client.Keys("*").Single().ShouldEqual("foo");
         }
+
+        [Test]
+        public void Exists()
+        {
+            client.Exists("foo").ShouldBeFalse();
+
+            client.Set("foo", "bar");
+
+            client.Exists("foo").ShouldBeTrue();
+        }
     }
 }

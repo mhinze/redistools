@@ -11,5 +11,6 @@ namespace Client
         StatusReply FlushAll();
         string[] Keys(string pattern);
         int DbSize();
+        bool Exists(string key);
     }
 }
