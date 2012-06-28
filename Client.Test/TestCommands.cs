@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using NUnit.Framework;
 using Should;
 
@@ -86,6 +87,34 @@ namespace Client.Test
             client.Set("foo", "bar");
 
             client.Exists("foo").ShouldBeTrue();
+        }
+
+        [Test]
+        public void Expires()
+        {
+            client.Set("foo", "bar");
+
+            client.Expire("foo", 60).ShouldBeTrue();
+        }
+
+        [Test]
+        public void Ttl()
+        {
+            client.Set("foo", "bar");
+
+            client.Expire("foo", 6000);
+
+            client.Ttl("foo").ShouldBeInRange(1, 6000);
+        }
+
+        [Test]
+        public void ExpireAt()
+        {
+            client.Set("foo", "bar");
+
+            client.ExpireAt("foo", DateTime.UtcNow.AddSeconds(200));
+
+            Assert.That(client.Ttl("foo"), Is.GreaterThan(1));
         }
     }
 }

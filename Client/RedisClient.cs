@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Text;
 using Client.Replies;
@@ -48,7 +49,7 @@ namespace Client
             return reply.GetElements().Select(x => Encoding.UTF8.GetString(x)).ToArray();
         }
 
-        public int DbSize()
+        public long DbSize()
         {
             return _connection.SendExpectInt(RedisCommands.DBSIZE);
         }
@@ -56,6 +57,22 @@ namespace Client
         public bool Exists(string key)
         {
             return _connection.SendExpectInt(RedisCommands.EXISTS, key.ToBytes()) == 1;
+        }
+
+        public bool Expire(string key, int seconds)
+        {
+            return _connection.SendExpectInt(RedisCommands.EXPIRE, key.ToBytes(), seconds.ToString().ToBytes()) == 1;
+        }
+
+        public long Ttl(string key)
+        {
+            return _connection.SendExpectInt("TTL", key);
+        }
+
+        public bool ExpireAt(string key, DateTime expireDate)
+        {
+            var unixTimestamp = ((int)(expireDate - new DateTime(1970, 1, 1)).TotalSeconds).ToString();
+            return _connection.SendExpectInt("EXPIREAT", key, unixTimestamp) == 1;
         }
     }
 }

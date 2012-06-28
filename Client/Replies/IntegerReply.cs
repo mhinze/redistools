@@ -2,11 +2,11 @@ namespace Client.Replies
 {
     public class IntegerReply
     {
-        public IntegerReply(int value)
+        public IntegerReply(long value)
         {
             Value = value;
         }
 
-        public int Value { get; private set; }
+        public long Value { get; private set; }
     }
 }

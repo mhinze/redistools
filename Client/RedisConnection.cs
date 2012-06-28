@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Client.Replies;
 using Client.Replies.Parsers;
+using System.Linq;
 
 namespace Client
 {
@@ -71,9 +72,19 @@ namespace Client
             return Send(arguments, stream => bulkReplyParser.Parse(stream));
         }
 
-        public int SendExpectInt(params byte[][] arguments)
+        public long SendExpectInt(params byte[][] arguments)
         {
             return Send(arguments, stream => integerReplyParser.Parse(stream)).Value;
+        }
+
+        public long SendExpectInt(params string[] arguments)
+        {
+            return SendExpectInt(arguments.Select(x => x.ToBytes()).ToArray());
+        }
+
+        public long SendExpectInt(byte[] command, params string[] arguments)
+        {
+            return SendExpectInt(new[] {command}.Concat(arguments.Select(x => x.ToBytes())).ToArray());
         }
 
         class NoopLog : IConnectionLog
@@ -85,3 +96,4 @@ namespace Client
         }
     }
 }
+

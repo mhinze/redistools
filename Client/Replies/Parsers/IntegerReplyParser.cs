@@ -7,10 +7,14 @@ namespace Client.Replies.Parsers
     {
          public IntegerReply Parse(Stream reply)
          {
-             reply.ReadByte();
+             var discarded = reply.ReadByte();
              var readLine = ReadLine(reply);
-             var i = int.Parse(readLine);
-             return new IntegerReply(i);
+             long i;
+             if (long.TryParse(readLine, out i))
+             {
+                 return new IntegerReply(i);    
+             }
+             throw new RedisReplyException(readLine);
          }
 
          string ReadLine(Stream stream)

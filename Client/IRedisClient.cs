@@ -1,4 +1,5 @@
-﻿using Client.Replies;
+﻿using System;
+using Client.Replies;
 
 namespace Client
 {
@@ -10,7 +11,10 @@ namespace Client
         string GetString(string key);
         StatusReply FlushAll();
         string[] Keys(string pattern);
-        int DbSize();
+        long DbSize();
         bool Exists(string key);
+        bool Expire(string key, int seconds);
+        long Ttl(string key);
+        bool ExpireAt(string key, DateTime expireDate);
     }
 }
