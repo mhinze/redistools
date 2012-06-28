@@ -36,6 +36,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Replies\BulkReplyInfo.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="IConnectionLog.cs" />
     <Compile Include="IRedisClient.cs" />
