@@ -1,6 +1,6 @@
 ﻿namespace Client.Replies
 {
-    public class StatusReply
+    public class StatusReply : IReply
     {
         public StatusReply(string status)
         {

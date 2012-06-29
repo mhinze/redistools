@@ -18,7 +18,7 @@ namespace Client
                     {typeof (StatusReply), new StatusReplyParser()}
                 };
 
-        public static IReplyParser<T> Get<T>()
+        public static IReplyParser<T> Get<T>() where T : IReply
         {
             return (IReplyParser<T>) table[typeof (T)];
         }
@@ -36,17 +36,17 @@ namespace Client
             _socket = new RedisClientSocket(server);
         }
 
-        public TReply Send<TReply>(params byte[][] arguments)
+        public TReply Send<TReply>(params byte[][] arguments) where TReply : IReply
         {
             return send(arguments, ReplyParsers.Get<TReply>().Parse);
         }
 
-        public TReply Send<TReply>(params string[] arguments)
+        public TReply Send<TReply>(params string[] arguments) where TReply : IReply
         {
             return Send<TReply>(arguments.Select(x => x.ToBytes()).ToArray());
         }
 
-        public TReply Send<TReply>(byte[] command, params string[] arguments)
+        public TReply Send<TReply>(byte[] command, params string[] arguments) where TReply : IReply
         {
             var sources = new[] {command}.Concat(arguments.Select(x => x.ToBytes())).ToArray();
 

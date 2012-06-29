@@ -1,6 +1,6 @@
 namespace Client.Replies
 {
-    public class IntegerReply
+    public class IntegerReply : IReply
     {
         public IntegerReply(long value)
         {

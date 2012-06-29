@@ -49,6 +49,7 @@
     <Compile Include="RedisServer.cs" />
     <Compile Include="Replies\BulkReply.cs" />
     <Compile Include="Replies\IntegerReply.cs" />
+    <Compile Include="Replies\IReply.cs" />
     <Compile Include="Replies\MultiBulkReply.cs" />
     <Compile Include="Replies\Parsers\BulkReplyParser.cs" />
     <Compile Include="Replies\Parsers\IReplyParser.cs" />

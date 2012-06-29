@@ -23,5 +23,8 @@ namespace Client
         StatusReply Quit();
         StatusReply Select(int db);
         BulkReplyInfo Info();
+        StatusReply BgRewriteAof();
+        StatusReply BgSave();
+
     }
 }

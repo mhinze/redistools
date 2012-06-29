@@ -1,6 +1,6 @@
 namespace Client.Replies
 {
-    public class BulkReply
+    public class BulkReply : IReply
     {
         public BulkReply(byte[] value)
         {

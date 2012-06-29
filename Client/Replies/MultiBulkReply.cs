@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Client.Replies
 {
-    public class MultiBulkReply
+    public class MultiBulkReply : IReply
     {
         readonly List<byte[]> elements = new List<byte[]>();
 

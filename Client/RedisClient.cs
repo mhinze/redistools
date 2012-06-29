@@ -100,5 +100,15 @@ namespace Client
         {
             return _connection.Send<BulkReply>("INFO");
         }
+
+        public StatusReply BgRewriteAof()
+        {
+            return _connection.Send<StatusReply>("BGREWRITEAOF");
+        }
+
+        public StatusReply BgSave()
+        {
+            return _connection.Send<StatusReply>("BGSAVE");
+        }
     }
 }

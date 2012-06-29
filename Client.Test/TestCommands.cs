@@ -154,5 +154,17 @@ namespace Client.Test
         {
             client.Info()["role"].ShouldEqual("master");
         }
+
+        [Test, Explicit]
+        public void BgRewriteAof()
+        {
+            client.BgRewriteAof().Status.ShouldNotBeNull();
+        }
+
+        [Test, Explicit]
+        public void BgSave()
+        {
+            client.BgSave().Status.ShouldNotBeNull();
+        }
     }
 }
