@@ -26,20 +26,4 @@ namespace Client.Test.Replies.Parsers
             reply.Value.ShouldEqual(1000);
         }
     }
-
-    public class IntegerReplyParserTests_Error
-    {
-        
-        
-        [Test, ExpectedException(typeof(RedisReplyException), ExpectedMessage = "ERR")]
-        public void Should_create_reply_with_status()
-        {
-            const string replyString = "-ERR";
-
-            var stream = new MemoryStream(replyString.ToBytes());
-
-            new IntegerReplyParser().Parse(stream);
-
-        }
-    }
 }

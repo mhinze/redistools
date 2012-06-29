@@ -8,21 +8,31 @@ namespace Client.Replies.Parsers
         public MultiBulkReply Parse(Stream reply)
         {
             var result = new MultiBulkReply();
-            reply.ReadByte();
-            var length = ReadLine(reply);
-            if (length[0] == '-' && length[1] == '1' && length.Length == 2) return null;
-            var i = int.Parse(length);
-            if (i == 0) return result;
+
+            var firstByte = reply.ReadByte();
+            var line = ReadLine(reply);
+
+            if (firstByte == '-')
+                throw new RedisReplyException(line);
+
+            if (line[0] == '-' && line[1] == '1' && line.Length == 2) return null;
+
+            var elementCount = int.Parse(line);
+
+            if (elementCount == 0)
+                return result;
+
             var elementParser = new BulkReplyParser();
-            for (int j = 0; j < i; j++)
+
+            for (int i = 0; i < elementCount; i++)
             {
-                var bulkReply = elementParser.Parse(reply);
-                if (bulkReply == null)
+                var element = elementParser.Parse(reply);
+                if (element == null)
                     result.AddElement(null);
                 else
-                result.AddElement(bulkReply.Value);
+                    result.AddElement(element.Value);
             }
-            
+
             return result;
         }
 
