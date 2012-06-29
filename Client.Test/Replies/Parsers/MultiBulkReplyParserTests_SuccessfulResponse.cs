@@ -7,27 +7,6 @@ using Should;
 
 namespace Client.Test.Replies.Parsers
 {
-    public class MultiBulkReplyParserTests_EmptyResponse
-    {
-        MultiBulkReply reply;
-
-        [TestFixtureSetUp]
-        public void When_parsing_an_empty_response()
-        {
-            const string replyString = "*0\r\n";
-
-            var stream = new MemoryStream(replyString.ToBytes());
-            
-            reply = new MultiBulkReplyParser().Parse(stream);
-        }
-
-        [Test]
-        public void Should_return_an_empty_result_set()
-        {
-            reply.GetElements().ShouldBeEmpty();
-        }
-    }
-
     public class MultiBulkReplyParserTests_SuccessfulResponse
     {
         MultiBulkReply reply;

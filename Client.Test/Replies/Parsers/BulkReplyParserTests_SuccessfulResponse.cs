@@ -27,18 +27,4 @@ namespace Client.Test.Replies.Parsers
             reply.Value.ToUtf8String().ShouldEqual("foobar");
         }
     }
-
-    [TestFixture]
-    public class BulkReplyParserTests_Error
-    {
-        [Test, ExpectedException(typeof(RedisReplyException), ExpectedMessage = "-ERR")]
-        public void Should_create_reply_with_status()
-        {
-            const string replyString = "-ERR";
-
-            var stream = new MemoryStream(replyString.ToBytes());
-
-            new BulkReplyParser().Parse(stream);
-        }
-    }
 }
